@@ -18,11 +18,17 @@ class Actor {
 		Window	&render;
 
 		void tick(float _delta) {
+			preUpdate(_delta);
 			update(_delta);
+			postUpdate(_delta);
+
+			preDraw();
 			draw();
+			draw_GUI();
+			postDraw();
 		};
 
-		void events(){
+		void events() {
 			onKeyboardEvent();
 			onMouseEvent();
 		}
@@ -47,10 +53,14 @@ class Actor {
 		size_t width, height;
 
 		// == Events(Runs every frame) ==
-		virtual void update(float _delta) {
-			(void)_delta;
-		};
+		virtual void preUpdate(float _delta) { (void)_delta; };
+		virtual void update(float _delta) { (void)_delta; };
+		virtual void postUpdate(float _delta) { (void)_delta; };
+
+		virtual void preDraw() {};
 		virtual void draw() {};
+		virtual void postDraw() {};
+
 		virtual void draw_GUI() {};
 
 		// == Utility methods ==

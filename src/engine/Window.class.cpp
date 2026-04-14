@@ -118,22 +118,18 @@ void Window::mainLoop() {
 			if (it != keyEvent.end())
 				it->second(event);
 		}
+		// == input events ==
 		auto copy = actors;
 		for (auto &actor: copy)
 			actor->events();
 
-		// == Game running ==
+		// == Simulation + rendering ==
 		if (!paused) {
 			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Set background color to black as default
 			SDL_RenderClear(renderer);
 		
-			// World rendering
 			for (auto &actor: copy)
 				actor->tick(deltaTime);
-
-			// GUI rendering
-			for (auto &actor: copy)
-				actor->draw_GUI();
 
 			SDL_RenderPresent(renderer);
 		}

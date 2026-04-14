@@ -20,12 +20,26 @@ class Tetris: public Actor {
 	protected:
 		bool any = false;
 		bool none = true;
+		int side = 1;
+		int renderSide = 1;
 
 		void update(float _delta) override {
 			(void)_delta;
 		};
+		void preDraw() override {
+			if (side != 0)
+				renderSide = side;
+		}
 		void draw() override {
 			drawRect(x, y, width, height, {0, 0, 255, 255});
+			//Eye
+			int eyeW = width / 4;
+			int eyeH = height / 2;
+
+			int eyeX = x + width / 2 + (renderSide * (width / 4)) - (eyeW / 2);
+			int eyeY = y + height / 4;
+
+			drawRect(eyeX, eyeY, eyeW, eyeH, {255, 255, 255, 255});
 		 };
 
 		void draw_GUI() override {
@@ -48,6 +62,8 @@ class Tetris: public Actor {
 			none = keyboardCheckPressed(KEY_NONE);
 
 			int speed = 10;
+
+			side = right - left;
 
 			x += (right - left) * speed;
 			y += (down - up) * speed;

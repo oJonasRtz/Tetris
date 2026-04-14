@@ -8,6 +8,7 @@ typedef struct s_sprite {
 	SDL_Texture* texture;
 	int width;
 	int height;
+	int side = 1;
 } t_sprite;
 
 typedef struct s_input {
