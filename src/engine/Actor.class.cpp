@@ -25,3 +25,32 @@ void Actor::drawLine(int x1, int y1, int x2, int y2, SDL_Color color) {
 // void Actor::drawTexture(SDL_Texture* texture, int x, int y, size_t width, size_t height) {
 // 	render.drawTexture(texture, x, y, width, height);
 // }
+
+// === Utility methods ===
+size_t Actor::getFPS() const {
+	return render.fps;
+}
+size_t Actor::getWindowWidth() const {
+	return render.width;
+}
+size_t Actor::getWindowHeight() const {
+	return render.height;
+}
+
+// == Physics methods ==
+void Actor::setPosition(int newX, int newY) {
+	x = newX;
+	y = newY;
+}
+
+
+// == Running events ==
+void Actor::gameStop() {
+	render.stop();
+}
+void Actor::gameResume() {
+	render.resume();
+}
+void Actor::gameExit() {
+	render.exit();
+}

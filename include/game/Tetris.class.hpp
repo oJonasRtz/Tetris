@@ -8,48 +8,31 @@
 
 class Tetris: public Actor {
 	public:
-		Tetris(Window &window) : Actor(window) {};
+		Tetris(Window &window) : Actor(window) {
+			x = 50;
+			y = 50;
+		};
 		~Tetris() {};
 
 	protected:
-		int side = 1;
-		float time = 0.0f;
-		size_t messageIndex = 0;
-		int cnt = 0;
-		std::string message = std::to_string(cnt) + " - Hello, Tetris!";
-		void update() override {
-			x += side;
-			if (x + 100 >= 800 || x < 0) side = -side;
-
-			time += 0.05f;
-			messageIndex++;
-			if (messageIndex % 60 == 0)
-				message = std::to_string(cnt++) + " - Hello, Tetris!";
+		void update(float _delta) override {
+			(void)_delta;
+		};
+		void draw() override {
+			drawRect(x, y, 32, 32, {0, 0, 255, 255});
 		};
 
-		void draw() override {
-			this->drawText(message, 50, 50, {255, 255, 255, 255});
-			this->drawRect(50, 100, 100 + x, 100, {255, 0, 0, 255});
-			
-			int centerY = 300;
-			int amplitude = 80;
-			float frequency = 0.02f;
+		void onKeyboardEvent(const std::unordered_map<t_keyboard, t_input> &key) override {
+			auto left = key.find(KEY_LEFT) != key.end() ? key.at(KEY_LEFT) : t_input{};
+			auto right = key.find(KEY_RIGHT) != key.end() ? key.at(KEY_RIGHT) : t_input{};
+			auto down = key.find(KEY_DOWN) != key.end() ? key.at(KEY_DOWN) : t_input{};
+			auto up = key.find(KEY_UP) != key.end() ? key.at(KEY_UP) : t_input{};
 
-			int prevX = 0;
-			int prevY = centerY;
+			int speed = 10;
 
-			for (int x = 0; x < 800; x++) {
-				int y = centerY + static_cast<int>(
-					std::sin((frequency * x) + time) * amplitude
-				);
 
-				if (x > 0) {
-					this->drawLine(prevX, prevY, x, y, {0, 255, 0, 255});
-				}
-				prevX = x;
-				prevY = y;
-
-			}
+			x += (right.pressed ? speed : 0) - (left.pressed ? speed : 0);
+			y += (down.pressed ? speed : 0) - (up.pressed ? speed : 0);
 		};
 };
 

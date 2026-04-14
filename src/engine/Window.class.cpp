@@ -26,10 +26,11 @@ void Window::removeActor(Actor* actor) {
 
 // == Public methods ==
 // ## Constructor and Destructor ##
-Window::Window(const std::string &name, size_t width, size_t height): name(name) {
+Window::Window(const std::string &name, size_t width, size_t height): name(name), width(width), height(height) {
 	// == Variables initialization ==
 	fps = 60;
 	running = true;
+	paused = false;
 
 	// == SDL Initialization ==
 	if (SDL_Init(SDL_INIT_VIDEO) < 0 || TTF_Init() < 0) {
@@ -50,6 +51,39 @@ Window::Window(const std::string &name, size_t width, size_t height): name(name)
 		std::cerr << "Window or Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
 		running = false;
 	}
+
+	keyEvent[SDL_KEYDOWN] = [this](SDL_Event &e){
+		auto key = (t_keyboard)e.key.keysym.scancode;
+		auto &k = keyboard[key];
+
+		if (!k.pressed)
+			k.down = true;
+
+		k.pressed = true;
+	};
+	keyEvent[SDL_KEYUP] = [this](SDL_Event &e){
+		auto key = (t_keyboard)e.key.keysym.scancode;
+		auto &k = keyboard[key];
+
+		k.up = true;
+		k.pressed = false;
+	};
+	keyEvent[SDL_MOUSEBUTTONDOWN] = [this](SDL_Event &e){
+		auto button = (t_mouse)e.button.button;
+		auto &b = mouseButtons[button];
+
+		if (!b.pressed)
+			b.down = true;
+
+		b.pressed = true;
+	};
+	keyEvent[SDL_MOUSEBUTTONUP] = [this](SDL_Event &e){
+		auto button = (t_mouse)e.button.button;
+		auto &b = mouseButtons[button];
+
+		b.up = true;
+		b.pressed = false;
+	};
 };
 Window::~Window() {
 	if (renderer) SDL_DestroyRenderer(renderer);
@@ -66,35 +100,45 @@ void Window::mainLoop() {
 	size_t frameDelay = 1000 / fps;
 	size_t frameStart;
 	size_t frameEnd;
+	uint32_t lastTime = SDL_GetTicks();
 
 	while (running) {
+		uint32_t currentTime = SDL_GetTicks();
+		float deltaTime = (currentTime - lastTime) / 1000.0f; // delta time in seconds
+		lastTime = currentTime;
 		frameStart = SDL_GetTicks();
+
+		resetInput();
+		// == Event handling ==
 		while (SDL_PollEvent(&event) != 0) {
 			if (event.type == SDL_QUIT)
 				running = false;
+
+			auto it = keyEvent.find(event.type);
+			if (it != keyEvent.end())
+				it->second(event);
 		}
-
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Set background color to black as default
-		SDL_RenderClear(renderer);
-
-		// copy to avoid issues with actors being added/removed during iteration
 		auto copy = actors;
 		for (auto &actor: copy)
-			actor->tick();
+			actor->events(keyboard, mouseButtons);
+
+		// == Game running ==
+		if (!paused) {
+			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Set background color to black as default
+			SDL_RenderClear(renderer);
 		
-		SDL_RenderPresent(renderer);
-		
-		//	== Frame rate control ==
+			for (auto &actor: copy)
+				actor->tick(deltaTime);
+			
+			SDL_RenderPresent(renderer);
+		}
+		//	== FPS cap ==
 		frameEnd = SDL_GetTicks();
 		size_t frameTime = frameEnd - frameStart;
-		
-		if (frameTime < frameDelay)
+		if (frameDelay > frameTime)
 			SDL_Delay(frameDelay - frameTime);
 
-		frameEnd = SDL_GetTicks();
-		frameTime = frameEnd - frameStart;
-		if (frameTime > 0)
-			std::cout << "\rFPS: " << 1000 / frameTime << std::flush;
+		std::cout << "\rFPS: " << (1000.0f / (SDL_GetTicks() - frameStart)) << std::flush;
 	}
 }
 void Window::updateFPS(size_t fps) {
@@ -159,3 +203,17 @@ void Window::drawLine(int x1, int y1, int x2, int y2, SDL_Color color) {
 // 	SDL_Rect dstRect = {x, y, static_cast<int>(width), static_cast<int>(height)};
 // 	SDL_RenderCopy(renderer, texture, nullptr, &dstRect);
 // }
+
+
+// == input ==
+void Window::resetInput() {
+	for (auto &key: keyboard) {
+		key.second.down = false;
+		key.second.up = false;
+	}
+
+	for (auto &button: mouseButtons) {
+		button.second.down = false;
+		button.second.up = false;
+	}
+}
