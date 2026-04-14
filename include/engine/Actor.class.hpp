@@ -9,6 +9,7 @@
 #include <SDL2/SDL_ttf.h>
 #include "Actor.structs.hpp"
 #include <unordered_map>
+#include <typeindex>
 
 class Window;
 
@@ -45,12 +46,18 @@ class Actor {
 
 		friend class Window;
 	public:
-		Actor(Window &window);
+		Actor(Window &window, int x, int y, int width, int height);
 		virtual ~Actor();
 
+		// == getters ==
+		int getX() const { return x; };
+		int getY() const { return y; };
+		int getWidth() const { return width; };
+		int getHeight() const { return height; };
+		virtual std::type_index getType() const { return typeid(*this); };
+
 	protected:
-		int x, y;
-		size_t width, height;
+		int x, y, width, height;
 
 		// == Events(Runs every frame) ==
 		virtual void preUpdate(float _delta) { (void)_delta; };
@@ -63,6 +70,10 @@ class Actor {
 
 		virtual void draw_GUI() {};
 
+		// == Input handling ==
+		virtual void	onKeyboardEvent() {}
+		virtual void	onMouseEvent() {};
+
 		// == Utility methods ==
 		size_t getFPS() const;
 		size_t getWindowWidth() const;
@@ -70,7 +81,7 @@ class Actor {
 
 		// == Physics methods ==
 		void	setPosition(int newX, int newY);
-		//void	checkCollision(const Actor &other);
+		bool	placeMeeting(int x, int y, std::type_index type) const;
 
 		// == Draw methods ==
 		void drawText(const std::string &text, int x, int y, SDL_Color color = {0, 0, 0, 255});
@@ -83,10 +94,7 @@ class Actor {
 		void	gameResume();
 		void	gameExit();
 
-		// == Input handling ==
-		virtual void	onKeyboardEvent() {}
-		virtual void	onMouseEvent() {};
-
+		// == Input checks ==
 		bool keyboardCheckPressed(t_keyboard key) const;
 		bool keyboardCheckDown(t_keyboard key) const;	
 		bool keyboardCheckUp(t_keyboard key) const;

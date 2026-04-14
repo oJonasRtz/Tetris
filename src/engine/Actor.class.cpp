@@ -3,11 +3,11 @@
 
 
 // == Constructor and Destructor ==
-Actor::Actor(Window &window) : render(window) {
-	x = 0;
-	y = 0;
-	width = 0;
-	height = 0;
+Actor::Actor(Window &window, int x, int y, int width, int height) : render(window) {
+	this->x = x;
+	this->y = y;
+	this->width = width;
+	this->height = height;
 	render.addActor(this);
 };
 Actor::~Actor() {
@@ -45,6 +45,22 @@ void Actor::setPosition(int newX, int newY) {
 	y = newY;
 }
 
+bool Actor::placeMeeting(int x, int y, std::type_index type) const {
+	for (auto actor: render.actors) {
+		if (actor == this || actor->getType() != type)
+			continue;
+
+		if (
+			x < actor->getX() + actor->getWidth() &&
+			x + getWidth() > actor->getX() &&
+			y < actor->getY() + actor->getHeight() &&
+			y + getHeight() > actor->getY()
+		)
+			return true;
+	}
+
+	return false;
+}
 
 // == Running events ==
 void Actor::gameStop() {

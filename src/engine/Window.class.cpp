@@ -41,6 +41,7 @@ Window::Window(const std::string &name, size_t width, size_t height): name(name)
 
 	window = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND); // Enable alpha blending for transparency
 	defaultColor = {0, 0, 0, 255}; // Black as default color
 	defaultFont = TTF_OpenFont(
 		"/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",

@@ -5,15 +5,16 @@
 #include "engine/Window.class.hpp"
 #include "engine/Actor.class.hpp"
 #include <cmath>
+#include "game/Block.class.hpp"
 
 class Tetris: public Actor {
 	public:
-		Tetris(Window &window) : Actor(window) {
-			width = 32;
-			height = 32;
+		Tetris(Window &window, int x, int y, int width, int height) : Actor(window, x, y, width, height) {
+			this->width = 32;
+			this->height = 32;
 
-			x = getWindowWidth() / 2 - width / 2;
-			y = getWindowHeight() / 2 - height / 2;
+			this->x = getWindowWidth() / 2 - this->width / 2;
+			this->y = getWindowHeight() / 2 - this->height / 2;
 		};
 		~Tetris() {};
 
@@ -23,8 +24,23 @@ class Tetris: public Actor {
 		int side = 1;
 		int renderSide = 1;
 
+		bool left = false;
+		bool right = false;
+		bool up = false;
+		bool down = false;
+
+		int speed = 10;
+
 		void update(float _delta) override {
 			(void)_delta;
+
+			float dx = (right - left) * speed;
+			float dy = (down - up) * speed;
+
+			if (!placeMeeting(x + dx, y, typeid(Block)))
+				x += dx;
+			if (!placeMeeting(x, y + dy, typeid(Block)))
+				y += dy;
 		};
 		void preDraw() override {
 			if (side != 0)
@@ -40,7 +56,12 @@ class Tetris: public Actor {
 			int eyeY = y + height / 4;
 
 			drawRect(eyeX, eyeY, eyeW, eyeH, {255, 255, 255, 255});
-		 };
+
+			// light zone
+			drawRect(50, 100, 200, 200, {255, 255, 0, 128});
+			drawRect(250, 100, 200, 200, {255, 0, 255, 128});
+			drawRect(150, 300, 200, 200, {255, 255, 255, 128});
+		};
 
 		void draw_GUI() override {
 			drawText("Tetris", 10, 10, {255, 255, 255, 255});
@@ -52,21 +73,14 @@ class Tetris: public Actor {
 		};
 
 		void onKeyboardEvent() override {
-			auto left = keyboardCheckPressed(KEY_LEFT);
-			auto right = keyboardCheckPressed(KEY_RIGHT);
-			auto down = keyboardCheckPressed(KEY_DOWN);
-			auto up = keyboardCheckPressed(KEY_UP);
+			left = keyboardCheckPressed(KEY_LEFT);
+			right = keyboardCheckPressed(KEY_RIGHT);
+			down = keyboardCheckPressed(KEY_DOWN);
+			up = keyboardCheckPressed(KEY_UP);
 
 			auto esc = keyboardCheckDown(KEY_ESCAPE);
 			any = keyboardCheckPressed(KEY_ANY);
 			none = keyboardCheckPressed(KEY_NONE);
-
-			int speed = 10;
-
-			side = right - left;
-
-			x += (right - left) * speed;
-			y += (down - up) * speed;
 
 			if (esc)
 				gameExit();

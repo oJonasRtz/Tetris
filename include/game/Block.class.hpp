@@ -7,8 +7,15 @@
 
 class Block: public Actor {
 	public:
-		Block(Window &window) : Actor(window) {};
+		Block(Window &window, int x, int y, int width, int height) : Actor(window, x, y, width, height) {};
 		~Block() {};
+
+	protected:
+		void draw() override {
+			auto white = SDL_Color{255, 255, 255, 255};
+			
+			drawRect(x, y, width, height, white);
+		};
 };
 
 #endif
