@@ -28,7 +28,7 @@ class Window {
 
 		friend class Actor;
 	public:
-		Window(const std::string &name);
+		Window(const std::string &name, size_t width = 800, size_t height = 600);
 		~Window();
 
 		void mainLoop();
@@ -41,7 +41,7 @@ class Window {
 
 		void drawRect(int x, int y, int width, int height, SDL_Color color);
 		void drawLine(int x1, int y1, int x2, int y2, SDL_Color color);
-		void drawTexture(const std::string &texture, int x, int y, size_t width, size_t height);
+		// void drawTexture(const std::string &texture, int x, int y, size_t width, size_t height);
 };
 
 #endif

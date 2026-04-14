@@ -4,6 +4,8 @@
 
 // == Constructor and Destructor ==
 Actor::Actor(Window &window) : render(window) {
+	x = 0;
+	y = 0;
 	render.addActor(this);
 };
 Actor::~Actor() {
@@ -20,6 +22,6 @@ void Actor::drawRect(int x, int y, int width, int height, SDL_Color color) {
 void Actor::drawLine(int x1, int y1, int x2, int y2, SDL_Color color) {
 	render.drawLine(x1, y1, x2, y2, color);
 }
-void Actor::drawTexture(SDL_Texture* texture, int x, int y, size_t width, size_t height) {
-	render.drawTexture(texture, x, y, width, height);
-}
+// void Actor::drawTexture(SDL_Texture* texture, int x, int y, size_t width, size_t height) {
+// 	render.drawTexture(texture, x, y, width, height);
+// }

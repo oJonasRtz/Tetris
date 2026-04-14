@@ -11,11 +11,15 @@ class Tetris: public Actor {
 		~Tetris() {};
 
 	protected:
-		void update() override {};
+		int side = 1;
+		void update() override {
+			x += side;
+			if (x + 100 >= 800 || x < 0) side = -side;
+		};
 
 		void draw() override {
 			this->drawText("Hello, Tetris!", 50, 50, {255, 255, 255, 255});
-			this->drawRect(50, 100, 100, 100, {255, 0, 0, 255});
+			this->drawRect(50 + x, 100, 100, 100, {255, 0, 0, 255});
 			this->drawLine(50, 250, 150, 350, {0, 255, 0, 255});
 			// Example texture drawing (assuming you have a valid SDL_Texture* named 'texture')
 			// this->drawTexture(texture, 200, 100, 64, 64);

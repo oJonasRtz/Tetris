@@ -26,7 +26,7 @@ void Window::removeActor(Actor* actor) {
 
 // == Public methods ==
 // ## Constructor and Destructor ##
-Window::Window(const std::string &name): name(name) {
+Window::Window(const std::string &name, size_t width, size_t height): name(name) {
 	// == Variables initialization ==
 	fps = 60;
 	running = true;
@@ -38,7 +38,7 @@ Window::Window(const std::string &name): name(name) {
 		return;
 	}
 
-	window = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow(name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	defaultColor = {0, 0, 0, 255}; // Black as default color
 	defaultFont = TTF_OpenFont(
@@ -150,12 +150,12 @@ void Window::drawLine(int x1, int y1, int x2, int y2, SDL_Color color) {
 	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
 }
-void Window::drawTexture(SDL_Texture* texture, int x, int y, size_t width, size_t height) {
-	if (!texture) {
-		std::cerr << "Invalid texture!" << std::endl;
-		return;
-	}
+// void Window::drawTexture(SDL_Texture* texture, int x, int y, size_t width, size_t height) {
+// 	if (!texture) {
+// 		std::cerr << "Invalid texture!" << std::endl;
+// 		return;
+// 	}
 
-	SDL_Rect dstRect = {x, y, static_cast<int>(width), static_cast<int>(height)};
-	SDL_RenderCopy(renderer, texture, nullptr, &dstRect);
-}
+// 	SDL_Rect dstRect = {x, y, static_cast<int>(width), static_cast<int>(height)};
+// 	SDL_RenderCopy(renderer, texture, nullptr, &dstRect);
+// }
