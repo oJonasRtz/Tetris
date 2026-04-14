@@ -27,6 +27,16 @@ class Actor {
 			onMouseEvent();
 		}
 
+		// == Input handling helpers ==
+		enum e_input_state {
+			PRESSED,
+			DOWN,
+			UP
+		};
+		bool checkState(const t_input &i, e_input_state state) const;
+		bool inputKeyHelper(t_keyboard key, e_input_state state) const;
+		bool inputMouseHelper(t_mouse button, e_input_state state) const;
+
 		friend class Window;
 	public:
 		Actor(Window &window);
@@ -34,6 +44,7 @@ class Actor {
 
 	protected:
 		int x, y;
+		size_t width, height;
 
 		// == Events(Runs every frame) ==
 		virtual void update(float _delta) {

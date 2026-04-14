@@ -6,6 +6,8 @@
 Actor::Actor(Window &window) : render(window) {
 	x = 0;
 	y = 0;
+	width = 0;
+	height = 0;
 	render.addActor(this);
 };
 Actor::~Actor() {
@@ -55,35 +57,85 @@ void Actor::gameExit() {
 	render.exit();
 }
 
-// === Input ==
-bool Actor::keyboardCheckPressed(t_keyboard key) const {
-	auto it = render.keyboard.find(key);
+// === Input ===
+bool Actor::checkState(const t_input &i, e_input_state state) const {
+	switch (state) {
+		case PRESSED: return i.pressed;
+		case DOWN: return i.down;
+		case UP: return i.up;
+	}
+	return false;
+}
 
-	return it != render.keyboard.end() && it->second.pressed;
+bool Actor::inputKeyHelper(t_keyboard key, e_input_state state) const {
+	// ANY handling
+	if (key == KEY_ANY) {
+		for (auto &k: render.keyboard)
+			if (checkState(k.second, state))
+				return (true);
+
+		return (false);
+	}
+	// NONE handling
+	if (key == KEY_NONE) {
+		for (auto &k: render.keyboard)
+			if (checkState(k.second, state))
+				return (false);
+
+		return (true);
+	}
+
+	// Normal key handling
+	auto it = render.keyboard.find(key);
+	if (it == render.keyboard.end())
+		return false;
+
+	return checkState(it->second, state);
+}
+bool Actor::inputMouseHelper(t_mouse button, e_input_state state) const {
+	// ANY handling
+	if (button == MOUSE_ANY) {
+		for (auto &b: render.mouseButtons)
+			if (checkState(b.second, state))
+				return (true);
+
+		return (false);
+	}
+	// NONE handling
+	if (button == MOUSE_NONE) {
+		for (auto &b: render.mouseButtons)
+			if (checkState(b.second, state))
+				return (false);
+
+		return (true);
+	}
+
+	// Normal button handling
+	auto it = render.mouseButtons.find(button);
+	if (it == render.mouseButtons.end())
+		return false;
+
+	return checkState(it->second, state);
+}
+
+
+bool Actor::keyboardCheckPressed(t_keyboard key) const {
+	return inputKeyHelper(key, PRESSED);
 }
 bool Actor::keyboardCheckDown(t_keyboard key) const {
-	auto it = render.keyboard.find(key);
-
-	return it != render.keyboard.end() && it->second.down;
+	return inputKeyHelper(key, DOWN);
 }
 bool Actor::keyboardCheckUp(t_keyboard key) const {
-	auto it = render.keyboard.find(key);
-
-	return it != render.keyboard.end() && it->second.up;
+	return inputKeyHelper(key, UP);
 }
+
 
 bool Actor::mouseCheckPressed(t_mouse button) const {
-	auto it = render.mouseButtons.find(button);
-
-	return it != render.mouseButtons.end() && it->second.pressed;
+	return inputMouseHelper(button, PRESSED);
 }
 bool Actor::mouseCheckDown(t_mouse button) const {
-	auto it = render.mouseButtons.find(button);
-
-	return it != render.mouseButtons.end() && it->second.down;
+	return inputMouseHelper(button, DOWN);
 }
 bool Actor::mouseCheckUp(t_mouse button) const {
-	auto it = render.mouseButtons.find(button);
-
-	return it != render.mouseButtons.end() && it->second.up;
+	return inputMouseHelper(button, UP);
 }

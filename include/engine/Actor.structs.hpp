@@ -17,7 +17,9 @@ typedef struct s_input {
 }	t_input;
 
 typedef enum e_mouse {
-	MOUSE_ANY = SDL_BUTTON_X1, // Represents any mouse button
+	MOUSE_NONE = 0,
+	MOUSE_ANY = -1,
+
 	MOUSE_LEFT = SDL_BUTTON_LEFT,
 	MOUSE_MIDDLE = SDL_BUTTON_MIDDLE,
 	MOUSE_RIGHT = SDL_BUTTON_RIGHT,
@@ -28,7 +30,8 @@ typedef enum e_mouse {
 
 // Common keyboard keys mapped to SDL scancodes
 typedef enum e_keys {
-	KEY_ANY = SDL_SCANCODE_UNKNOWN, // Represents any key
+	KEY_NONE = 0,
+	KEY_ANY = -1,
 
 	KEY_A = SDL_SCANCODE_A,
 	KEY_B = SDL_SCANCODE_B,
