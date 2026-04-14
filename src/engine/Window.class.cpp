@@ -120,16 +120,21 @@ void Window::mainLoop() {
 		}
 		auto copy = actors;
 		for (auto &actor: copy)
-			actor->events(keyboard, mouseButtons);
+			actor->events();
 
 		// == Game running ==
 		if (!paused) {
 			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255); // Set background color to black as default
 			SDL_RenderClear(renderer);
 		
+			// World rendering
 			for (auto &actor: copy)
 				actor->tick(deltaTime);
-			
+
+			// GUI rendering
+			for (auto &actor: copy)
+				actor->draw_GUI();
+
 			SDL_RenderPresent(renderer);
 		}
 		//	== FPS cap ==

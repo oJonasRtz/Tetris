@@ -22,13 +22,10 @@ class Actor {
 			draw();
 		};
 
-		void events(
-			const std::unordered_map<t_keyboard, t_input> &keyboard,
-			const std::unordered_map<t_mouse, t_input> &mouse
-		) {
-			onKeyboardEvent(keyboard);
-			onMouseEvent(mouse);
-		};
+		void events(){
+			onKeyboardEvent();
+			onMouseEvent();
+		}
 
 		friend class Window;
 	public:
@@ -43,6 +40,7 @@ class Actor {
 			(void)_delta;
 		};
 		virtual void draw() {};
+		virtual void draw_GUI() {};
 
 		// == Utility methods ==
 		size_t getFPS() const;
@@ -65,12 +63,16 @@ class Actor {
 		void	gameExit();
 
 		// == Input handling ==
-		virtual void	onKeyboardEvent(const std::unordered_map<t_keyboard, t_input> &key) {
-			(void)key;
-		};
-		virtual void	onMouseEvent(const std::unordered_map<t_mouse, t_input> &button) {
-			(void)button;
-		};
+		virtual void	onKeyboardEvent() {}
+		virtual void	onMouseEvent() {};
+
+		bool keyboardCheckPressed(t_keyboard key) const;
+		bool keyboardCheckDown(t_keyboard key) const;	
+		bool keyboardCheckUp(t_keyboard key) const;
+
+		bool mouseCheckPressed(t_mouse button) const;
+		bool mouseCheckDown(t_mouse button) const;
+		bool mouseCheckUp(t_mouse button) const;
 };
 
 #endif

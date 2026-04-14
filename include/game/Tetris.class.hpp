@@ -22,17 +22,29 @@ class Tetris: public Actor {
 			drawRect(x, y, 32, 32, {0, 0, 255, 255});
 		};
 
-		void onKeyboardEvent(const std::unordered_map<t_keyboard, t_input> &key) override {
-			auto left = key.find(KEY_LEFT) != key.end() ? key.at(KEY_LEFT) : t_input{};
-			auto right = key.find(KEY_RIGHT) != key.end() ? key.at(KEY_RIGHT) : t_input{};
-			auto down = key.find(KEY_DOWN) != key.end() ? key.at(KEY_DOWN) : t_input{};
-			auto up = key.find(KEY_UP) != key.end() ? key.at(KEY_UP) : t_input{};
+		void draw_GUI() override {
+			drawText("Tetris", 10, 10, {255, 255, 255, 255});
+		};
+
+		void onKeyboardEvent() override {
+			auto left = keyboardCheckPressed(KEY_LEFT);
+			auto right = keyboardCheckPressed(KEY_RIGHT);
+			auto down = keyboardCheckPressed(KEY_DOWN);
+			auto up = keyboardCheckPressed(KEY_UP);
+
+			auto esc = keyboardCheckDown(KEY_ESCAPE);
+			auto any = keyboardCheckPressed(KEY_ANY);
 
 			int speed = 10;
 
+			x += (right - left) * speed;
+			y += (down - up) * speed;
 
-			x += (right.pressed ? speed : 0) - (left.pressed ? speed : 0);
-			y += (down.pressed ? speed : 0) - (up.pressed ? speed : 0);
+			if (any)
+				drawText("Any key pressed!", 10, 30, {255, 255, 255, 255});
+
+			if (esc)
+				gameExit();
 		};
 };
 

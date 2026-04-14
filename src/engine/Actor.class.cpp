@@ -54,3 +54,36 @@ void Actor::gameResume() {
 void Actor::gameExit() {
 	render.exit();
 }
+
+// === Input ==
+bool Actor::keyboardCheckPressed(t_keyboard key) const {
+	auto it = render.keyboard.find(key);
+
+	return it != render.keyboard.end() && it->second.pressed;
+}
+bool Actor::keyboardCheckDown(t_keyboard key) const {
+	auto it = render.keyboard.find(key);
+
+	return it != render.keyboard.end() && it->second.down;
+}
+bool Actor::keyboardCheckUp(t_keyboard key) const {
+	auto it = render.keyboard.find(key);
+
+	return it != render.keyboard.end() && it->second.up;
+}
+
+bool Actor::mouseCheckPressed(t_mouse button) const {
+	auto it = render.mouseButtons.find(button);
+
+	return it != render.mouseButtons.end() && it->second.pressed;
+}
+bool Actor::mouseCheckDown(t_mouse button) const {
+	auto it = render.mouseButtons.find(button);
+
+	return it != render.mouseButtons.end() && it->second.down;
+}
+bool Actor::mouseCheckUp(t_mouse button) const {
+	auto it = render.mouseButtons.find(button);
+
+	return it != render.mouseButtons.end() && it->second.up;
+}
